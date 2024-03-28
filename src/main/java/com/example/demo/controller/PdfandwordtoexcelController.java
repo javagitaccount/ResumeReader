@@ -24,12 +24,14 @@ public class PdfandwordtoexcelController {
 
 	@Autowired
 	private PdfandwordtoexcelService pdfandwordtoexcelService; 
-	
+
+	@Autowired
+	HttpHeaders headers;
+
 	@PostMapping("/getExcelByPdf")
 	public ResponseEntity<byte[]> getExcelByPdf(
 			@RequestParam("pdfWordFile") List<MultipartFile> pdfFiles) {
 
-		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(
 				MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 		headers.setContentDispositionFormData("filename", "CandidateDetails.xlsx");
@@ -38,20 +40,15 @@ public class PdfandwordtoexcelController {
 			}
 	
 	@PostMapping("/meargeExcelFiles")
-	private ResponseEntity<byte[]> meargeExcelFiles(
+	public ResponseEntity<byte[]> meargeExcelFiles(
 			@RequestParam("excelFiles") List<MultipartFile> excelFiles) {
-		
-		HttpHeaders headers = new HttpHeaders();
+
 		headers.setContentType(
 				MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 		headers.setContentDispositionFormData("filename", "CandidateDetails.xlsx");
 		   try {
 			return new ResponseEntity<>(pdfandwordtoexcelService.mergeExcelFiles(excelFiles), headers, HttpStatus.OK);
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (InvalidFormatException|IOException e) {
 			e.printStackTrace();
 		}
 		return null;
